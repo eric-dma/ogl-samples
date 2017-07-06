@@ -31,6 +31,12 @@ extern "C" {
 #define GLAPI extern
 #endif
 
+#define GL_TEXTURE_TILING_EXT 0x9580
+#define GL_OPTIMAL_TILING_EXT 0x9584
+#define GL_LINEAR_TILING_EXT  0x9585
+#define GL_NUM_TILING_TYPES_EXT 0x9582
+#define GL_TILING_TYPES_EXT 0x9583
+
 #define GL_HANDLE_TYPE_OPAQUE_FD_KHR 0x9586 /* TODO GET CORRECT VALUE */
 
 typedef void (APIENTRYP PFN_glGenMemoryObjectsKHR) (GLsizei n, GLuint *memoryObjects);

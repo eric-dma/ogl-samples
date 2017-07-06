@@ -434,6 +434,30 @@ private:
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
+        GLint params[4];
+        GLfloat setme = GL_LINEAR_TILING_EXT;
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_TILING_EXT, &params[0]);
+        printf("GL_TEXTURE_TILING_EXT: 0x%x\n", params[0]);
+
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_TILING_EXT, &setme);
+
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_TILING_EXT, &params[0]);
+        printf("GL_TEXTURE_TILING_EXT: 0x%x\n", params[0]);
+
+        glGetInternalformativ(GL_TEXTURE_2D,
+                              Format.Internal,
+                              GL_NUM_TILING_TYPES_EXT,
+                              4,
+                              &params[0]);
+        printf("GL_NUM_TILING_TYPES_EXT: 0x%x\n", params[0]);
+
+        glGetInternalformativ(GL_TEXTURE_2D,
+                              Format.Internal,
+                              GL_TILING_TYPES_EXT,
+                              4,
+                              &params[0]);
+        printf("GL_TILING_TYPES_EXT: 0x%x, 0x%x\n", params[0], params[1]);
+
         return true;
     }
 
