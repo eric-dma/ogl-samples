@@ -36,6 +36,7 @@ extern "C" {
 #define GL_LINEAR_TILING_EXT  0x9585
 #define GL_NUM_TILING_TYPES_EXT 0x9582
 #define GL_TILING_TYPES_EXT 0x9583
+#define GL_DEDICATED_MEMORY_OBJECT_EXT 0x9581
 
 #define GL_HANDLE_TYPE_OPAQUE_FD_KHR 0x9586 /* TODO GET CORRECT VALUE */
 
@@ -51,10 +52,17 @@ typedef void (APIENTRYP PFN_glTexStorageMem2DKHR) (GLenum target,
                 GLuint64 offset);
 
 typedef void (APIENTRYP PFN_glImportMemoryFdKHR) (GLuint memory,
-			GLuint64 size,
-			GLenum handleType,
-			int fd);
+                                                  GLuint64 size,
+                                                  GLenum handleType,
+                                                  int fd);
 
+typedef void (APIENTRYP PFN_glMemoryObjectParameterivEXT) (GLuint memory,
+                                                           GLenum pname,
+                                                           const int *params);
+
+typedef void (APIENTRYP PFN_glGetMemoryObjectParameterivEXT) (GLuint memory,
+                                                              GLenum pname,
+                                                              int *params);
 #ifdef __cplusplus
 }
 #endif

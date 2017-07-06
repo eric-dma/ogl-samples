@@ -88,6 +88,8 @@ struct GlDriver {
     PFN_glGenMemoryObjectsKHR pfnGenMemoryObjectsKHR;
     PFN_glTexStorageMem2DKHR pfnTexStorageMem2DKHR;
     PFN_glImportMemoryFdKHR pfnImportMemoryFdKHR;
+    PFN_glMemoryObjectParameterivEXT pfnMemoryObjectParameterivEXT;
+    PFN_glGetMemoryObjectParameterivEXT pfnGetMemoryObjectParameterivEXT;
 };
 
 struct GlDriver glDriver;
@@ -100,9 +102,16 @@ void initGlDriver()
         (PFN_glTexStorageMem2DKHR)glXGetProcAddressARB((const GLubyte*)"glTexStorageMem2DEXT");
     glDriver.pfnImportMemoryFdKHR =
         (PFN_glImportMemoryFdKHR)glXGetProcAddressARB((const GLubyte*)"glImportMemoryFdEXT");
+    glDriver.pfnMemoryObjectParameterivEXT =
+        (PFN_glMemoryObjectParameterivEXT)glXGetProcAddressARB((const GLubyte*)"glMemoryObjectParameterivEXT");
+    glDriver.pfnGetMemoryObjectParameterivEXT =
+        (PFN_glGetMemoryObjectParameterivEXT)glXGetProcAddressARB((const GLubyte*)"glGetMemoryObjectParameterivEXT");
+
     if (!glDriver.pfnImportMemoryFdKHR
         || !glDriver.pfnTexStorageMem2DKHR
-        || !glDriver.pfnGenMemoryObjectsKHR) {
+        || !glDriver.pfnGenMemoryObjectsKHR
+        || !glDriver.pfnGetMemoryObjectParameterivEXT
+        || !glDriver.pfnMemoryObjectParameterivEXT) {
         printf("Failed to load gl extensions\n");
         exit(1);
     }
@@ -235,7 +244,17 @@ GLuint vkAllocateGlMemObj(gli::texture2d &texture)
      * Import memory into GL
      */
     GLuint memObjName;
+    int gldedicated;
     glDriver.pfnGenMemoryObjectsKHR(1, &memObjName);
+
+    glDriver.pfnGetMemoryObjectParameterivEXT(memObjName, GL_DEDICATED_MEMORY_OBJECT_EXT, &gldedicated);
+    printf("GL DEDICATED: 0x%x\n", gldedicated);
+
+    gldedicated = GL_TRUE;
+    glDriver.pfnMemoryObjectParameterivEXT(memObjName, GL_DEDICATED_MEMORY_OBJECT_EXT, &gldedicated);
+    glDriver.pfnGetMemoryObjectParameterivEXT(memObjName, GL_DEDICATED_MEMORY_OBJECT_EXT, &gldedicated);
+    printf("GL DEDICATED: 0x%x\n", gldedicated);
+
     glDriver.pfnImportMemoryFdKHR(memObjName, memReqs.size, GL_HANDLE_TYPE_OPAQUE_FD_KHR, fd);
 
     return memObjName;
@@ -328,6 +347,8 @@ void initVkDevice()
     return;
 }
 
+ //void glGetInternalformativ(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint *params);
+ //void glGetInternalformati64v(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint64 *params);
 class gl_450_culling : public test
 {
 public:
