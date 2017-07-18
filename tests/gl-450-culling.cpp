@@ -126,7 +126,7 @@ struct VkDriver {
     std::vector<VkQueueFamilyProperties> queueFamilyProperties;
     VkDevice device;
     VkQueue queue;
-    PFN_vkGetMemoryFdKHX pfnGetMemoryFdKHX;
+    PFN_vkGetMemoryFdKHR pfnGetMemoryFdKHX;
 };
 
 struct VkDriver vkDriver;
@@ -170,7 +170,7 @@ GLuint vkAllocateGlMemObj(gli::texture2d &texture)
 	imageCreateInfo.pNext = NULL;
     imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
     imageCreateInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
-    imageCreateInfo.flags = VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_KHX;
+    imageCreateInfo.flags = VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_KHR;
     imageCreateInfo.mipLevels = texture.levels();
     imageCreateInfo.arrayLayers = 1;
     imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -234,7 +234,11 @@ GLuint vkAllocateGlMemObj(gli::texture2d &texture)
      * Export memory as FD
      */
     int fd = -1;
-    vkDriver.pfnGetMemoryFdKHX(vkDriver.device, memory, VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHX, &fd);
+    struct VkMemoryGetFdInfoKHR memFdInfo = {};
+    memFdInfo.sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+    memFdInfo.memory = memory;
+    memFdInfo.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR;
+    vkDriver.pfnGetMemoryFdKHX(vkDriver.device, &memFdInfo, &fd);
 
     /**
      * THESE ARE THE NEW PARTS REQUIRED IN VRCLIENT
@@ -342,7 +346,7 @@ void initVkDevice()
 
     vkGetDeviceQueue(vkDriver.device, queueInfo.queueFamilyIndex, 0, &vkDriver.queue);
 
-    vkDriver.pfnGetMemoryFdKHX = (PFN_vkGetMemoryFdKHX)vkGetDeviceProcAddr(vkDriver.device, "vkGetMemoryFdKHX");
+    vkDriver.pfnGetMemoryFdKHX = (PFN_vkGetMemoryFdKHR)vkGetDeviceProcAddr(vkDriver.device, "vkGetMemoryFdKHR");
 
     return;
 }
