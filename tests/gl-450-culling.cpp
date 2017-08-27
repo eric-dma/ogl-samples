@@ -199,7 +199,7 @@ GLuint vkAllocateGlMemObj(gli::texture2d &texture)
     VkDeviceMemory memory;
 
     VkDedicatedAllocationMemoryAllocateInfoNV dedicated = {};
-    dedicated.sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV;
+    dedicated.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR;
     dedicated.image = image;
 
     VkMemoryAllocateInfo memAllocInfo = {};
